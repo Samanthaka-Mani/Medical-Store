@@ -9,30 +9,32 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+
 import os
 import json
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# ✅ Define BASE_DIR first
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ✅ Load config.json using BASE_DIR
 with open(os.path.join(BASE_DIR, 'config.json')) as config_file:
     config = json.load(config_file)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-=ne$7#7vl1l61s@=0c+8e&^*robji0x2g0vvdcn2(c9d4bit&'
+# ✅ Use SECRET_KEY from config.json
+SECRET_KEY = config["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True  # Set this to False on production
 
-ALLOWED_HOSTS = ["medicalstore-django.herokuapp.com", "127.0.0.1"]
-
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "medicalstore-django.herokuapp.com",
+    "medical-store-q531.onrender.com"  # <- Add this line
+]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -77,47 +79,34 @@ WSGI_APPLICATION = 'medicalstore.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-if DEBUG is True:
+if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-elif DEBUG is False:
+else:
     DATABASES = {
-
         'default': {
-
             'ENGINE': 'django.db.backends.postgresql',
-
             'NAME': config["NAME"],
-
             'USER': config["USER"],
-
             'PASSWORD': config["PASSWORD"],
-
             'HOST': config["HOST"],
-
             'PORT': 5432,
         }
     }
 
 
 # Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 4,
-        }
+        'OPTIONS': {'min_length': 4}
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -129,23 +118,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "store/static"
